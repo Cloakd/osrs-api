@@ -11,21 +11,21 @@ import (
 )
 
 const (
-	CACHE_FILE = "cache/monster_cache.json"
+	ITEM_CACHE_FILE = "cache/item_cache.json"
 )
 
 func main() {
 	start := time.Now()
 
-	monMap, err := cmd.CacheMonsters()
+	monMap, err := cmd.CacheItems()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	mWrite := make(chan *osrs_api.Monster, 100)
-	go func(mChan chan *osrs_api.Monster) {
-		log.Printf("Opening file: %s", CACHE_FILE)
-		f, err := os.Create(CACHE_FILE)
+	mWrite := make(chan *osrs_api.Item, 100)
+	go func(mChan chan *osrs_api.Item) {
+		log.Printf("Opening file: %s", ITEM_CACHE_FILE)
+		f, err := os.Create(ITEM_CACHE_FILE)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -46,11 +46,11 @@ func main() {
 		}
 	}(mWrite)
 
-	ms := cmd.NewMonsterScraper(&monMap)
+	ms := cmd.NewItemScraper(&monMap)
 	ms.Scrape(mWrite)
 
 	close(mWrite)
 
 	fin := time.Since(start)
-	log.Printf("Monster scrape took %s", fin)
+	log.Printf("Item scrape took %s", fin)
 }

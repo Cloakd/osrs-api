@@ -12,3 +12,9 @@ type Reference struct {
 	Author string
 	Date   string
 }
+
+func NewNote(str string) *RarityNote {
+	n := RarityNote{}
+
+	return &n
+}

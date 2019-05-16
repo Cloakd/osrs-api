@@ -18,7 +18,7 @@ type (
 	}
 )
 
-func GetMonsters() []string {
+func GetMonsters() map[string]string {
 	mi := MonsterIndex{
 		monsterLinks: sync.Map{},
 		IndexPages: []string{
@@ -38,7 +38,7 @@ func GetMonsters() []string {
 
 	mi.ExpandIndex()
 
-	return mi.BuildIndex()
+	return mi.Index()
 }
 
 //Expand out the index pages into all monster links¬
@@ -47,29 +47,32 @@ func (i *MonsterIndex) ExpandIndex() {
 
 	i.wait = sync.WaitGroup{}
 	for _, index := range i.IndexPages {
+		i.wait.Add(1)
 		go i.links(index, &i.monsterLinks)
 	}
 	i.wait.Wait()
 }
 
-func (i *MonsterIndex) BuildIndex() []string {
+func (i *MonsterIndex) Index() map[string]string {
 	log.Printf("Building Page Indexes")
+	idx := make(map[string]string)
 
 	i.wait = sync.WaitGroup{}
-
-	var idx []string
 	i.monsterLinks.Range(func(key, value interface{}) bool {
-		log.Printf("%v - %s", key, value)
+		log.Printf("%s", value)
+		idx[value.(string)] = i.monsterUrl(value.(string))
 
-		idx = append(idx, value.(string))
 		return true
 	})
 
 	return idx
 }
 
+func (i *MonsterIndex) monsterUrl(name string) string {
+	return fmt.Sprintf("%s/%s", WIKI_BASE, name)
+}
+
 func (i *MonsterIndex) links(index string, pageMap *sync.Map) {
-	i.wait.Add(1)
 	defer i.wait.Done()
 
 	url := fmt.Sprintf(WIKI_EDIT, index)
