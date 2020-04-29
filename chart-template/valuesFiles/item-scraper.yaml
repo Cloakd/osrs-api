@@ -1,0 +1,34 @@
+ambassador:
+  - host: item-scraper.scotth.uk
+    name: item-scraper
+    prefix: /
+ambassador_enabled: true
+enableEnvVars: true
+enabled: true
+envVars:
+  ENV_1: thing
+  ENV_2: thang
+image:
+  pullPolicy: Always
+  pullSecret: gkereg
+  repository: eu.gcr.io/hague-hosting/item-scraper
+  tag: v0.0.1
+liveness:
+  enabled: true
+  initialDelay: 30s
+  periodSeconds: 30s
+name: item-scraper
+readiness:
+  enabled: true
+  initialDelay: 30s
+  periodSeconds: 30s
+replicaCount: 1
+resources:
+  limits:
+    cpu: 512m
+    memory: 1Gi
+  requests:
+    cpu: 512m
+    memory: 1Gi
+restartPolicy: Always
+servicePort: 8080

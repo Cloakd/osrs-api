@@ -1,0 +1,59 @@
+{{- if .Values.enabled -}}
+{{- if .Values.servicePort }}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.name }}
+  {{ if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{ end }}
+  labels:
+    app: {{ .Chart.Name }}
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  {{- if .Values.ambassador_enabled }}
+  annotations:
+    getambassador.io/config: |
+{{- include "ambassador.mapping" . | nindent 6 }}
+  {{- end }}
+spec:
+  type: NodePort
+  ports:
+    - port: {{ .Values.servicePort }}
+      targetPort: http
+      protocol: TCP
+      name: http
+  selector:
+    app: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+{{- else -}}
+apiVersion: v1
+kind: Service
+metadata:
+  name: {{ .Values.name }}
+  {{ if .Values.namespace }}
+  namespace: {{ .Values.namespace }}
+  {{ end }}
+  labels:
+    app: {{ .Chart.Name }}
+    chart: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+  {{- if .Values.ambassador_enabled }}
+  annotations:
+    getambassador.io/config: |
+{{- include "ambassador.mapping" . | nindent 6 }}
+  {{- end }}
+spec:
+  type: NodePort
+  ports:
+    - port: 55555
+      targetPort: headless
+      protocol: TCP
+      name: headless
+  selector:
+    app: {{ .Chart.Name }}
+    release: {{ .Release.Name }}
+{{- end -}}
+{{- end -}}

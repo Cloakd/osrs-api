@@ -1,0 +1,10 @@
+{{- if .Values.enableEnvVars -}}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ .Values.name }}-variables
+  labels:
+    app: {{ .Chart.Name }}
+data:
+{{ toYaml .Values.envVars | indent 2 }}
+{{- end -}}
