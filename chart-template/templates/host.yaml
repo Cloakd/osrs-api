@@ -1,0 +1,17 @@
+{{- if .Values.ambassador_enabled -}}
+{{- range .Values.ambassador -}}
+apiVersion: getambassador.io/v2
+kind: Host
+metadata:
+  {{- if .name }}
+  name: {{ .name }}-host
+  {{- end }}
+spec:
+  {{- if .host }}
+  hostname: {{ .host }}
+  {{- end }}
+  acmeProvider:
+    authority: https://acme-v02.api.letsencrypt.org/directory
+    email: aaronjpitty@gmail.com
+{{- end -}}
+{{- end -}}
